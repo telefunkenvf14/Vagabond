@@ -165,17 +165,17 @@
 
             fsi.EvalExpression "x = y" |> shouldEqual true
 
-        [<Test>]
-        let ``06. Custom functions on custom types`` () =
-            
-            let fsi = FsiSession.Value
-
-            fsi.EvalInteraction "type Bar<'T> = Bar of 'T"
-            fsi.EvalInteraction "module Bar = let map f (Bar x) = Bar (f x)"
-            fsi.EvalInteraction "let rec factorial n = if n <= 0 then 1 else n * factorial(n-1)"
-            fsi.EvalInteraction "let x = Bar 10"
-            fsi.EvalInteraction "let (Bar y) = client.EvaluateThunk <| fun () -> Bar.map factorial x"
-            fsi.EvalExpression "y = factorial 10" |> shouldEqual true
+//        [<Test>]
+//        let ``06. Custom functions on custom types`` () =
+//            
+//            let fsi = FsiSession.Value
+//
+//            fsi.EvalInteraction "type Bar<'T> = Bar of 'T"
+//            fsi.EvalInteraction "module Bar = let map f (Bar x) = Bar (f x)"
+//            fsi.EvalInteraction "let rec factorial n = if n <= 0 then 1 else n * factorial(n-1)"
+//            fsi.EvalInteraction "let x = Bar 10"
+//            fsi.EvalInteraction "let (Bar y) = client.EvaluateThunk <| fun () -> Bar.map factorial x"
+//            fsi.EvalExpression "y = factorial 10" |> shouldEqual true
 
         [<Test>]
         let ``07. Nested module definitions`` () =
@@ -197,23 +197,23 @@
             fsi.EvalInteraction "let (Value y) = client.EvaluateThunk <| fun () -> let (Value y) = x in Value (y+1)" 
             fsi.EvalExpression "y" |> shouldEqual 42
 
-
-        [<Test>]
-        let ``09. Class Definitions`` () =
-            
-            let code = """
-            type Cell<'T> (x : 'T) =
-                let x = ref x
-                member __.Value
-                    with get () = !x
-                    and set y = x := y
-            """
-
-            let fsi = FsiSession.Value
-            fsi.EvalInteraction code
-            fsi.EvalInteraction "let c = Cell<int>(41)"
-            fsi.EvalInteraction "let c' = client.EvaluateThunk <| fun () -> c.Value <- c.Value + 1 ; c"
-            fsi.EvalExpression "c'.Value" |> shouldEqual 42
+//
+//        [<Test>]
+//        let ``09. Class Definitions`` () =
+//            
+//            let code = """
+//            type Cell<'T> (x : 'T) =
+//                let x = ref x
+//                member __.Value
+//                    with get () = !x
+//                    and set y = x := y
+//            """
+//
+//            let fsi = FsiSession.Value
+//            fsi.EvalInteraction code
+//            fsi.EvalInteraction "let c = Cell<int>(41)"
+//            fsi.EvalInteraction "let c' = client.EvaluateThunk <| fun () -> c.Value <- c.Value + 1 ; c"
+//            fsi.EvalExpression "c'.Value" |> shouldEqual 42
 
 
         [<Test>]
@@ -337,35 +337,35 @@
             fsi.EvalInteraction "open StaticAssemblyTest"
             fsi.EvalExpression "client.EvaluateThunk <| fun () -> let (TestCtor (v,_)) = value in v" |> shouldEqual 42
 
-        [<Test>]
-        let ``14. Execute code from F# script file`` () =
-            
-            let code = """
-            module Script
-            
-                type ScriptType<'T> = ScriptCtor of 'T
-
-                let map f (ScriptCtor x) = ScriptCtor (f x)
-
-                let rec factorial n =
-                    if n <= 1 then 1
-                    else
-                        n * factorial (n-1)
-
-                let value = ScriptCtor 10
-            """
-
-            let workDir = Path.GetTempPath()
-            let name = Path.GetRandomFileName()
-            let scriptPath = Path.Combine(workDir, Path.ChangeExtension(name, ".fsx"))
-            do File.WriteAllText(scriptPath, code)
-
-            let fsi = FsiSession.Value
-
-            fsi.LoadScript scriptPath
-            fsi.EvalInteraction "open Script"
-            fsi.EvalInteraction "let r = client.EvaluateThunk <| fun () -> map factorial value"
-            fsi.EvalExpression "r = map factorial value" |> shouldEqual true
+//        [<Test>]
+//        let ``14. Execute code from F# script file`` () =
+//            
+//            let code = """
+//            module Script
+//            
+//                type ScriptType<'T> = ScriptCtor of 'T
+//
+//                let map f (ScriptCtor x) = ScriptCtor (f x)
+//
+//                let rec factorial n =
+//                    if n <= 1 then 1
+//                    else
+//                        n * factorial (n-1)
+//
+//                let value = ScriptCtor 10
+//            """
+//
+//            let workDir = Path.GetTempPath()
+//            let name = Path.GetRandomFileName()
+//            let scriptPath = Path.Combine(workDir, Path.ChangeExtension(name, ".fsx"))
+//            do File.WriteAllText(scriptPath, code)
+//
+//            let fsi = FsiSession.Value
+//
+//            fsi.LoadScript scriptPath
+//            fsi.EvalInteraction "open Script"
+//            fsi.EvalInteraction "let r = client.EvaluateThunk <| fun () -> map factorial value"
+//            fsi.EvalExpression "r = map factorial value" |> shouldEqual true
 
         [<Test>]
         let ``15. Single Interaction - Multiple executions`` () =
