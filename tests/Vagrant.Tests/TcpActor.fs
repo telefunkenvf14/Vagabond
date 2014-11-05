@@ -137,7 +137,7 @@
 
         let sendRequest (request : ServerRequest<'T>) = async {
             use client = new TcpClient()
-            do client.Connect(severEndpoint)
+            do client.Connect(serverEndpoint)
 //            do! client.ConnectAsync(serverEndpoint.Address, serverEndpoint.Port)
             use stream = client.GetStream()
 
