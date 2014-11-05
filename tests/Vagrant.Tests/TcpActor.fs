@@ -137,7 +137,8 @@
 
         let sendRequest (request : ServerRequest<'T>) = async {
             use client = new TcpClient()
-            do! client.ConnectAsync(serverEndpoint.Address, serverEndpoint.Port)
+            do client.Connect(severEndpoint)
+//            do! client.ConnectAsync(serverEndpoint.Address, serverEndpoint.Port)
             use stream = client.GetStream()
 
             let bytes = pickler.Pickle request
